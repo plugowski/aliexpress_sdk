@@ -39,7 +39,7 @@ class AliExpress
         $response = $this->aliExpressClient->receive($request);
 
         $linkCollection = new PromotionLinkCollection();
-        foreach ($response['promotionUrls'] as $urls) {
+        foreach ($response->promotionUrls as $urls) {
             $linkCollection->add(new PromotionLink($urls[0], $urls[1]));
         }
 

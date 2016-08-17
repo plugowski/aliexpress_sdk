@@ -55,7 +55,7 @@ class AliExpressTest extends \PHPUnit_Framework_TestCase
 
         $this->AliExpressClient->expects($this->any())
             ->method('receive')
-            ->willReturn([
+            ->willReturn(json_decode(json_encode([
                 'promotionUrls' => [
                     0 => [
                         0 => $url,
@@ -64,7 +64,7 @@ class AliExpressTest extends \PHPUnit_Framework_TestCase
                 ],
                 'publisherId' => 107470220,
                 'trackingId' => $trackingId,
-            ]);
+            ])));
 
         $AliExpressSDK = new AliExpress($this->AliExpressClient);
         $promotionLinks = $AliExpressSDK->getPromotionLinkCollection($trackingId, [$url]);
