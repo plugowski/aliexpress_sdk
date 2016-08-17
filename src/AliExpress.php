@@ -4,6 +4,8 @@ namespace AliExpressSDK;
 use AliExpressSDK\PromotionLink\PromotionLink;
 use AliExpressSDK\PromotionLink\PromotionLinkCollection;
 use AliExpressSDK\PromotionLink\PromotionLinksRequest;
+use AliExpressSDK\PromotionProduct\PromotionProduct;
+use AliExpressSDK\PromotionProduct\PromotionProductCollection;
 use AliExpressSDK\PromotionProduct\PromotionProductRequest;
 
 /**
@@ -57,6 +59,7 @@ class AliExpress
     /**
      * @param int| string $keywordOrCategory
      * @param array $options
+     * @return PromotionProductCollection
      */
     public function listPromotionProduct($keywordOrCategory, array $options = [])
     {
@@ -69,5 +72,32 @@ class AliExpress
         $request->setParams($options);
 
         $response = $this->aliExpressClient->receive($request);
+
+        $promotionProductCollection = new PromotionProductCollection();
+        foreach ($response->products as $product) {
+            $promotionProduct = new PromotionProduct(
+                $product->{Request::FIELD_PRODUCT_ID},
+                $product->{Request::FIELD_PRODUCT_TITLE},
+                $product->{Request::FIELD_PRODUCT_URL},
+                $product->{Request::FIELD_IMAGE_URL},
+                $product->{Request::FIELD_VOLUME},
+                $product->{Request::FIELD_PACKAGE_TYPE},
+                $product->{Request::FIELD_LOT_NUM},
+                $product->{Request::FIELD_VALID_TIME},
+                new ProductPrice(
+                    $product->{Request::FIELD_LOCAL_PRICE},
+                    $product->{Request::FIELD_ORIGINAL_PRICE},
+                    $product->{Request::FIELD_SALE_PRICE},
+                    $product->{Request::FIELD_DISCOUNT},
+                    $product->{Request::FIELD_EVALUATE_SCORE},
+                    $product->{Request::FIELD_COMMISSION},
+                    $product->{Request::FIELD_COMMISSION_RATE},
+                    $product->{Request::FIELD_30_DAYS_COMMISSION}
+                )
+            );
+            $promotionProductCollection->add($promotionProduct);
+        }
+
+        return $promotionProductCollection;
     }
 }

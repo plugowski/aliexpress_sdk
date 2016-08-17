@@ -70,6 +70,14 @@ class PromotionLinksRequest extends Request
     protected $trackingId;
 
     /**
+     * PromotionLinksRequest constructor.
+     */
+    public function __construct()
+    {
+        $this->fields = implode(',', $this->allowedFields);
+    }
+
+    /**
      * @param string $trackingId
      * @return $this
      */

@@ -7,7 +7,6 @@ namespace AliExpressSDK\PromotionLink;
  */
 class PromotionLinkCollection implements \IteratorAggregate
 {
-
     /**
      * @var array
      */

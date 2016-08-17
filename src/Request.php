@@ -47,7 +47,6 @@ abstract class Request
     const PARAM_PAGE_NO = 'pageNo';
     const PARAM_PAGE_SIZE = 'pageSize';
     const PARAM_SORT = 'sort';
-    const PARAM_VALUE = 'Value';
     const PARAM_START_CREDIT_SCORE = 'startCreditScore';
     const PARAM_END_CREDIT_SCORE = 'endCreditScore';
     const PARAM_HIGH_QUALITY_ITEMS = 'highQualityItems';

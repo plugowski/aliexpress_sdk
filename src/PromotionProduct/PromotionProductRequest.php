@@ -33,7 +33,8 @@ class PromotionProductRequest extends Request
         self::FIELD_VOLUME,
         self::FIELD_PACKAGE_TYPE,
         self::FIELD_LOT_NUM,
-        self::FIELD_VALID_TIME
+        self::FIELD_VALID_TIME,
+        self::FIELD_LOCAL_PRICE
     ];
 
     /**
@@ -50,7 +51,6 @@ class PromotionProductRequest extends Request
         self::PARAM_PAGE_NO,
         self::PARAM_PAGE_SIZE,
         self::PARAM_SORT,
-        self::PARAM_VALUE,
         self::PARAM_START_CREDIT_SCORE,
         self::PARAM_END_CREDIT_SCORE,
         self::PARAM_HIGH_QUALITY_ITEMS,
@@ -146,6 +146,14 @@ class PromotionProductRequest extends Request
     protected $language;
 
     /**
+     * PromotionProductRequest constructor.
+     */
+    public function __construct()
+    {
+        $this->fields = implode(',', $this->allowedFields);
+    }
+
+    /**
      * @param array $fields
      * @return $this
      * @throws RequestInvalidFieldException
@@ -175,6 +183,7 @@ class PromotionProductRequest extends Request
      */
     public function setCategoryId($categoryId)
     {
+        // todo: validate categories
         $this->categoryId = $categoryId;
         return $this;
     }
@@ -235,6 +244,7 @@ class PromotionProductRequest extends Request
      */
     public function setPageSize($pageSize)
     {
+        // todo: validate lower or equals than 40
         $this->pageSize = $pageSize;
         return $this;
     }
@@ -245,6 +255,7 @@ class PromotionProductRequest extends Request
      */
     public function setSort($sort)
     {
+        // todo: validate sort type with array
         $this->sort = $sort;
         return $this;
     }
@@ -285,6 +296,7 @@ class PromotionProductRequest extends Request
      */
     public function setLocalCurrency($localCurrency)
     {
+        // todo: validate currencies
         $this->localCurrency = $localCurrency;
         return $this;
     }
@@ -295,6 +307,7 @@ class PromotionProductRequest extends Request
      */
     public function setLanguage($language)
     {
+        // todo: validate languages
         $this->language = $language;
         return $this;
     }
