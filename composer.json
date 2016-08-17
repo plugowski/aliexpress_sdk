@@ -1,0 +1,21 @@
+{
+    "name": "plugowski/aliexpress_sdk",
+    "require-dev": {
+        "phpunit/phpunit": "4.8.9"
+    },
+    "authors": [
+        {
+            "name": "Paweł Ługowski",
+            "email": "pawelugowski@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "guzzlehttp/guzzle": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "AliExpressSDK\\": "src/"
+        }
+    }
+}
