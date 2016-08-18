@@ -15,12 +15,16 @@ use AliExpressSDK\Request;
  * Class AliExpressTest
  * @package AliExpressSDKTest
  */
-class AliExpressTest extends \PHPUnit_Framework_TestCase
+class AliExpressTest extends BaseTestCase
 {
     /**
      * @var AliExpressClient | \PHPUnit_Framework_MockObject_MockObject
      */
     private $AliExpressClient;
+    /**
+     * @var Config
+     */
+    private $config;
 
     public function setUp()
     {
@@ -30,6 +34,21 @@ class AliExpressTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['receive'])
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->config = new Config('380a3d072b16d73d808d773d7cac4698', '7820539-cec1bb-7562ee3b071f1-464b67');
+    }
+
+    /**
+     * @test
+     */
+    public function shouldCreateConfig()
+    {
+        $apiKey = '380a3d072b16d73d808d773d7cac4698';
+        $signature = '7820539-cec1bb-7562ee3b071f1-464b67';
+
+        $config = new Config($apiKey, $signature);
+        self::assertEquals($apiKey, $config->getApiKey());
+        self::assertEquals($signature, $config->getSignature());
     }
 
     /**
@@ -37,7 +56,7 @@ class AliExpressTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldCreateApiObjectByFactory()
     {
-        $AliExpressSDK = AliExpressFactory::create(new Config('380a3d072b16d73d808d773d7cac4698', '7820539-cec1bb-7562ee3b071f1-464b67'));
+        $AliExpressSDK = AliExpressFactory::create($this->config);
         self::assertInstanceOf(AliExpress::class, $AliExpressSDK);
     }
 
@@ -53,20 +72,21 @@ class AliExpressTest extends \PHPUnit_Framework_TestCase
         $promotionLinkCollection = new PromotionLinkCollection();
         $promotionLinkCollection->add(new PromotionLink($url, $promotionUrl));
 
-        $this->AliExpressClient->expects($this->any())
-            ->method('receive')
-            ->willReturn(json_decode(json_encode([
+        $this->setClientResponse([
+            'result' => [
                 'promotionUrls' => [
-                    0 => [
-                        0 => $url,
-                        1 => $promotionUrl,
+                    [
+                        'url' => $url,
+                        'promotionUrl' => $promotionUrl,
                     ],
                 ],
                 'publisherId' => 107470220,
                 'trackingId' => $trackingId,
-            ])));
+            ],
+            'errorCode' => 20010000
+        ]);
 
-        $AliExpressSDK = new AliExpress($this->AliExpressClient);
+        $AliExpressSDK = $this->getAliExpressService($this->config);
         $promotionLinks = $AliExpressSDK->getPromotionLinkCollection($trackingId, [$url]);
 
         self::assertEquals($promotionLinkCollection, $promotionLinks);
@@ -100,34 +120,34 @@ class AliExpressTest extends \PHPUnit_Framework_TestCase
         $volume = '0';
         $localPrice = 'GBP 0.01';
 
-        $response = json_encode(['totalResults' => 105396,
-            'products' => [
-                0 => [
-                    Request::FIELD_LOT_NUM => $lotNum,
-                    Request::FIELD_PACKAGE_TYPE => $packageType,
-                    Request::FIELD_IMAGE_URL => $imageUrl,
-                    Request::FIELD_EVALUATE_SCORE => $evaluationScore,
-                    Request::FIELD_VOLUME => $volume,
-                    Request::FIELD_PRODUCT_ID => $productId,
-                    Request::FIELD_DISCOUNT => $discount,
-                    Request::FIELD_VALID_TIME => $validTime,
-                    Request::FIELD_COMMISSION_RATE => $commissionRate,
-                    Request::FIELD_30_DAYS_COMMISSION => $monthCommission,
-                    Request::FIELD_ORIGINAL_PRICE => $originalPrice,
-                    Request::FIELD_PRODUCT_TITLE => $productTitle,
-                    Request::FIELD_PRODUCT_URL => $productUrl,
-                    Request::FIELD_SALE_PRICE => $salePrice,
-                    Request::FIELD_COMMISSION => $commission,
-                    Request::FIELD_LOCAL_PRICE => $localPrice,
+        $this->setClientResponse([
+            'result' => [
+                'totalResults' => 105396,
+                'products' => [
+                    [
+                        Request::FIELD_LOT_NUM => $lotNum,
+                        Request::FIELD_PACKAGE_TYPE => $packageType,
+                        Request::FIELD_IMAGE_URL => $imageUrl,
+                        Request::FIELD_EVALUATE_SCORE => $evaluationScore,
+                        Request::FIELD_VOLUME => $volume,
+                        Request::FIELD_PRODUCT_ID => $productId,
+                        Request::FIELD_DISCOUNT => $discount,
+                        Request::FIELD_VALID_TIME => $validTime,
+                        Request::FIELD_COMMISSION_RATE => $commissionRate,
+                        Request::FIELD_30_DAYS_COMMISSION => $monthCommission,
+                        Request::FIELD_ORIGINAL_PRICE => $originalPrice,
+                        Request::FIELD_PRODUCT_TITLE => $productTitle,
+                        Request::FIELD_PRODUCT_URL => $productUrl,
+                        Request::FIELD_SALE_PRICE => $salePrice,
+                        Request::FIELD_COMMISSION => $commission,
+                        Request::FIELD_LOCAL_PRICE => $localPrice,
+                    ],
                 ],
             ],
+            'errorCode' => 20010000
         ]);
 
-        $this->AliExpressClient->expects($this->any())
-            ->method('receive')
-            ->willReturn(json_decode($response));
-
-        $AliExpressSDK = new AliExpress($this->AliExpressClient);
+        $AliExpressSDK = $this->getAliExpressService($this->config);
         $promotionProductCollection = $AliExpressSDK->listPromotionProduct($keywords, [
             Request::PARAM_LANGUAGE => 'pl',
             Request::PARAM_VOLUME_TO => 1.23
@@ -179,34 +199,34 @@ class AliExpressTest extends \PHPUnit_Framework_TestCase
         $volume = '0';
         $localPrice = 'GBP 0.01';
 
-        $response = json_encode(['totalResults' => 105396,
-            'products' => [
-                0 => [
-                    Request::FIELD_LOT_NUM => $lotNum,
-                    Request::FIELD_PACKAGE_TYPE => $packageType,
-                    Request::FIELD_IMAGE_URL => $imageUrl,
-                    Request::FIELD_EVALUATE_SCORE => $evaluationScore,
-                    Request::FIELD_VOLUME => $volume,
-                    Request::FIELD_PRODUCT_ID => $productId,
-                    Request::FIELD_DISCOUNT => $discount,
-                    Request::FIELD_VALID_TIME => $validTime,
-                    Request::FIELD_COMMISSION_RATE => $commissionRate,
-                    Request::FIELD_30_DAYS_COMMISSION => $monthCommission,
-                    Request::FIELD_ORIGINAL_PRICE => $originalPrice,
-                    Request::FIELD_PRODUCT_TITLE => $productTitle,
-                    Request::FIELD_PRODUCT_URL => $productUrl,
-                    Request::FIELD_SALE_PRICE => $salePrice,
-                    Request::FIELD_COMMISSION => $commission,
-                    Request::FIELD_LOCAL_PRICE => $localPrice,
+        $this->setClientResponse([
+            'result' => [
+                'totalResults' => 105396,
+                'products' => [
+                    [
+                        Request::FIELD_LOT_NUM => $lotNum,
+                        Request::FIELD_PACKAGE_TYPE => $packageType,
+                        Request::FIELD_IMAGE_URL => $imageUrl,
+                        Request::FIELD_EVALUATE_SCORE => $evaluationScore,
+                        Request::FIELD_VOLUME => $volume,
+                        Request::FIELD_PRODUCT_ID => $productId,
+                        Request::FIELD_DISCOUNT => $discount,
+                        Request::FIELD_VALID_TIME => $validTime,
+                        Request::FIELD_COMMISSION_RATE => $commissionRate,
+                        Request::FIELD_30_DAYS_COMMISSION => $monthCommission,
+                        Request::FIELD_ORIGINAL_PRICE => $originalPrice,
+                        Request::FIELD_PRODUCT_TITLE => $productTitle,
+                        Request::FIELD_PRODUCT_URL => $productUrl,
+                        Request::FIELD_SALE_PRICE => $salePrice,
+                        Request::FIELD_COMMISSION => $commission,
+                        Request::FIELD_LOCAL_PRICE => $localPrice,
+                    ],
                 ],
             ],
+            'errorCode' => 20010000
         ]);
 
-        $this->AliExpressClient->expects($this->any())
-            ->method('receive')
-            ->willReturn(json_decode($response));
-
-        $AliExpressSDK = new AliExpress($this->AliExpressClient);
+        $AliExpressSDK = $this->getAliExpressService($this->config);
         self::assertInstanceOf(PromotionProductCollection::class, $AliExpressSDK->listPromotionProduct(123));
     }
 }

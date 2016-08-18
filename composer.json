@@ -15,7 +15,8 @@
     },
     "autoload": {
         "psr-4": {
-            "AliExpressSDK\\": "src/"
+            "AliExpressSDK\\": "src/",
+            "AliExpressSDKTest\\": "test/"
         }
     }
 }

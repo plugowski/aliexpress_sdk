@@ -23,21 +23,23 @@ class AliExpressClient
     /**
      * AliExpressClient constructor.
      * @param Config $config
+     * @param Client $client
      */
-    public function __construct(Config $config)
+    public function __construct(Config $config, Client $client)
     {
         $this->config = $config;
-        $this->client = new Client();
+        $this->client = $client;
     }
 
     /**
      * @param Request $request
+     * @return \stdClass
      * @throws AliExpressClientException
      */
     public function receive(Request $request)
     {
         $uri = $this->apiUrl . $request->getName() . '/' . $this->config->getApiKey();
-        $response = json_decode($this->client->request('GET', $uri, ['query' => $request->getParams()]));
+        $response = json_decode($this->client->request('GET', $uri, ['query' => $request->getParams()])->getBody());
 
         if (self::CODE_SUCCESS !== $response->errorCode) {
             throw new AliExpressClientException($request->getErrorMessage($response->errorCode), $response->errorCode);
